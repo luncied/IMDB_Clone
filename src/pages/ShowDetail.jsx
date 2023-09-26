@@ -1,4 +1,4 @@
-function ShowDetail() {
+function ShowDetail () {
   return (
     <div>ShowPage</div>
   )

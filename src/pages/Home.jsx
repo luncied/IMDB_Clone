@@ -1,22 +1,104 @@
 import { useState, useEffect } from "react"
-function Home() {
+import Card from "../components/Card"
+import Filters from "../components/Filters"
+import sortNames from '../helpers/sortNames'
 
-  const [shows, setShows] = useState([]);
+function Home({ query, setQuery }) {
   const url = "https://api.tvmaze.com/shows";
+  const [shows, setShows] = useState([]);
+  const [filShows, setFilShows] = useState([]);
+  const [sortName, setSortName] = useState('');
+  const [sortGen, setSortGen] = useState('');
+  const [sortRat, setSortRat] = useState('');
 
   useEffect(() => {
     async function fetchData() {
-        const response = await fetch(url);
-        const json = await response.json();
-        setShows(json)
-    };
+      const response = await fetch(url);
+      const json = await response.json();
+      setShows(json)
+    }
     fetchData()
   }, [url]);
 
-  console.log(shows);
+  useEffect(() => {
+    setFilShows(shows.filter(show => {
+      return show.name.toLowerCase().includes(query.toLowerCase())
+    }))
+  }, [shows, query])
+
+  useEffect(() => {
+    if (sortName == "Asc") {
+      return setSortName(sortNames(filShows))
+    }
+    if (sortName == "Desc") {
+      return setSortName(sortNames(filShows, true))
+    }
+    if (sortName == "default") {
+      setFilShows(shows.filter(show => {
+        return show.name.toLowerCase().includes(query.toLowerCase())
+      }))
+      return setSortName(filShows)
+    }
+    }, [sortName] )
+
+  useEffect(() => {
+    if(sortGen == "default") {
+      setFilShows(shows.filter(show => {
+        return show.name.toLowerCase().includes(query.toLowerCase())
+      }))
+      return setSortName(filShows)
+    }
+    setFilShows(shows.filter(show => { return show.genres.includes(sortGen)}))
+    }, [sortGen])
+
+  useEffect(() => {
+    }, [sortRat])
+
+
+
+  function handleGenreSort(e) {
+    if (e.target.id === 'name-sort') {
+      return setSortName(e.target.value) 
+    }
+    if (e.target.id === 'genre-sort') {
+      return setSortGen(e.target.value)
+    }
+    if (e.target.id === 'rating-sort') {
+      return setSortRat(e.target.value)
+    }
+  }
+
+
+
+  const genres = Array.from(new Set(shows.map(show => show.genres).flat(1)))
+  const ratings = Array.from(new Set(shows.map(show => Math.round(show.rating.average))))
+
 
   return (
-    <></>
+    <>
+      <div className="container text-center my-4">
+        <div className="container d-flex my-5 justify-content-between">
+          <Filters
+            genres={genres}
+            ratings={ratings}
+            // setSortName={setSortName}
+            // setSortGen={setSortGen}
+            // setSortRat={setSortRat}
+            handleGenreSort={handleGenreSort}
+          />
+        </div>
+        <div className="row justify-content-center">
+          {
+            filShows.map(show => (
+              <Card
+                key={shows.id}
+                show={show}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </>
   )
 }
 

@@ -3,12 +3,12 @@ import Home from '../pages/Home'
 // import About from '../pages/About'
 import ShowDetail from '../pages/ShowDetail'
 
-function RoutesIndex () {
+function RoutesIndex ( {query, setQuery} ) {
   return (
     <Routes>
-      <Route path='/' element={<Home />} />
+      <Route path='/' element={<Home query={query} setQuery={setQuery}/>} />
       {/* <Route path='/about' element={<About />} /> */}
-      <Route path='/pokemon/:id' element={<ShowDetail />} />
+      <Route path='/' element={<ShowDetail />} />
     </Routes>
   )
 }
