@@ -11,7 +11,23 @@ function Home({ query, setQuery }) {
   const [sortGen, setSortGen] = useState('');
   const [sortRat, setSortRat] = useState('');
 
+  const genres = Array.from(new Set(shows.map(show => show.genres).flat(1)))
+  const ratings = Array.from(new Set(shows.map(show => Math.round(show.rating.average))))
+
+  function handleSort(e) {
+    if (e.target.id === 'name-sort') {
+      return setSortName(e.target.value) 
+    }
+    if (e.target.id === 'genre-sort') {
+      return setSortGen(e.target.value)
+    }
+    if (e.target.id === 'rating-sort') {
+      return setSortRat(e.target.value)
+    }
+  }
+
   useEffect(() => {
+    /* Obtiene los datos de la API y las guarda en "shows" */
     async function fetchData() {
       const response = await fetch(url);
       const json = await response.json();
@@ -21,6 +37,7 @@ function Home({ query, setQuery }) {
   }, [url]);
 
   useEffect(() => {
+    /* Guarda los shows que se buscan por nombre en el form y los guarda como una lista en "filShows" */
     setFilShows(shows.filter(show => {
       return show.name.toLowerCase().includes(query.toLowerCase())
     }))
@@ -37,7 +54,7 @@ function Home({ query, setQuery }) {
       setFilShows(shows.filter(show => {
         return show.name.toLowerCase().includes(query.toLowerCase())
       }))
-      return setSortName(filShows)
+      return setSortName('')
     }
     }, [sortName] )
 
@@ -46,33 +63,24 @@ function Home({ query, setQuery }) {
       setFilShows(shows.filter(show => {
         return show.name.toLowerCase().includes(query.toLowerCase())
       }))
-      return setSortName(filShows)
+      return setSortName('')
     }
-    setFilShows(shows.filter(show => { return show.genres.includes(sortGen)}))
+    setFilShows(shows.filter(show => { return show.genres.includes(sortGen)}));
     }, [sortGen])
 
   useEffect(() => {
+    if(sortRat == "default") {
+      setFilShows(shows.filter(show => {
+        return show.name.toLowerCase().includes(query.toLowerCase());
+      }));
+      return setSortName('');
+    }
+    setFilShows(shows.filter(show => { if(Number(sortRat) === Math.round(show.rating.average)){return show}}));
     }, [sortRat])
 
-
-
-  function handleGenreSort(e) {
-    if (e.target.id === 'name-sort') {
-      return setSortName(e.target.value) 
-    }
-    if (e.target.id === 'genre-sort') {
-      return setSortGen(e.target.value)
-    }
-    if (e.target.id === 'rating-sort') {
-      return setSortRat(e.target.value)
-    }
-  }
-
-
-
-  const genres = Array.from(new Set(shows.map(show => show.genres).flat(1)))
-  const ratings = Array.from(new Set(shows.map(show => Math.round(show.rating.average))))
-
+  useEffect(() => {
+      // console.log(filShows)
+  }, [filShows])
 
   return (
     <>
@@ -84,7 +92,7 @@ function Home({ query, setQuery }) {
             // setSortName={setSortName}
             // setSortGen={setSortGen}
             // setSortRat={setSortRat}
-            handleGenreSort={handleGenreSort}
+            handleSort={handleSort}
           />
         </div>
         <div className="row justify-content-center">
@@ -102,4 +110,4 @@ function Home({ query, setQuery }) {
   )
 }
 
-export default Home
+export default Home;

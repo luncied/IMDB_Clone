@@ -1,4 +1,4 @@
-import Navbar from './components/Navbar.jsx'
+import Navbar from './components/Navbar'
 import { BrowserRouter } from 'react-router-dom'
 import RoutesIndex from './routes/RoutesIndex'
 import { useState } from 'react';

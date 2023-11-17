@@ -1,3 +1,13 @@
 .portrait {
     max-width: 100%;
 }
+
+.card-title{
+    color: black;
+    text-decoration: none;
+}
+
+.card-title:hover{
+    color: rgba(29, 126, 126, 0.894);
+    text-decoration: underline;
+}
